@@ -1,6 +1,6 @@
 
 const getImageReq = (img) => {
-  const PAT = "57643cc08f004cc1902541cb9266b860";
+  const PAT = process.env.API_KEY;
   const USER_ID = "maxim";
   const APP_ID = "face-reco";
   const IMAGE_URL = img;
@@ -36,7 +36,7 @@ const getImageReq = (img) => {
 export const handleImage = async (req, res, db) => {
   try {
     const { id } = req.body;
-    const response = await db("users")
+    const response = await db("facerecodb")
       .where("id", "=", id)
       .increment("entries", 1)
       .returning("entries");

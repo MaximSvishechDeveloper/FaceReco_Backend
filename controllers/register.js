@@ -11,7 +11,7 @@ export const handleRegister = async (req,res,bcrypt,db) => {
         .into("login")
         .returning("email")
         .then((loginEmail) => {
-          return trx("facerecodb")
+          return trx("users")
             .returning("*")
             .insert({
               email: loginEmail[0].email,

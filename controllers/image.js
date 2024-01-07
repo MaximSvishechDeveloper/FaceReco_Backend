@@ -36,7 +36,7 @@ const getImageReq = (img) => {
 export const handleImage = async (req, res, db) => {
   try {
     const { id } = req.body;
-    const response = await db("facerecodb")
+    const response = await db("users")
       .where("id", "=", id)
       .increment("entries", 1)
       .returning("entries");

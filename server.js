@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 
 app.get("/", async (req, res) => {
   try {
-    const users = await db("facerecodb").select("*").returning("*");
+    const users = await db("users").select("*").returning("*");
     res.json(users);
   } catch {
     res.status(404).json("Fail");

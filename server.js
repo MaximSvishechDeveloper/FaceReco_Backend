@@ -3,15 +3,22 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import knex from "knex";
 import bcrypt from "bcryptjs";
-import { handleRegister } from "./controllers/register.js";
-import { handleSignIn } from "./controllers/signin.js";
+import dotenv from "dotenv";
+import { registerAuthentication } from "./controllers/register.js";
+import { signInAuthentication } from "./controllers/signin.js";
 import { handleImage, fetchImage } from "./controllers/image.js";
+import {
+  handleGetProfile,
+  handleProfileUpdate,
+} from "./controllers/profile.js";
+import { requireAuth } from "./controllers/authorization.js";
+import morgan from "morgan";
 
 export const db = knex({
   client: "pg",
   connection: {
-    connectString:process.env.DATABASE_URL,
-    ssl:{rejectUnauthorized:false},
+    connectString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
     host: process.env.DATABASE_HOST,
     port: 5432,
     user: process.env.DATABASE_USER,
@@ -20,7 +27,11 @@ export const db = knex({
   },
 });
 
+dotenv.config();
+
 const app = express();
+
+app.use(morgan("combined"));
 
 app.use(cors());
 
@@ -36,18 +47,26 @@ app.get("/", async (req, res) => {
 });
 
 app.post("/signin", (req, res) => {
-  handleSignIn(req, res, bcrypt, db);
+  signInAuthentication(req, res, bcrypt, db);
 });
 
-app.put("/image", (req, res) => {
+app.post("/profile/:id", requireAuth, (req, res) => {
+  handleProfileUpdate(req, res, db);
+});
+
+app.get("/profile/:id", requireAuth, (req, res) => {
+  handleGetProfile(req, res, db);
+});
+
+app.put("/image", requireAuth, (req, res) => {
   handleImage(req, res, db);
 });
-app.post("/imageUrl", (req, res) => {
+app.post("/imageUrl", requireAuth, (req, res) => {
   fetchImage(req, res);
 });
 
 app.post("/register", (req, res) => {
-  handleRegister(req, res, bcrypt, db);
+  registerAuthentication(req, res, bcrypt, db);
 });
 
 app.listen(3001, () => {

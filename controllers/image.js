@@ -1,4 +1,3 @@
-
 const getImageReq = (img) => {
   const PAT = process.env.API_KEY;
   const USER_ID = "maxim";
@@ -54,8 +53,10 @@ export const fetchImage = (req, res) => {
     getImageReq(input)
   )
     .then((response) => response.json())
-    .then((result) => { res.json(result)
-    }).catch(err => {
-        res.status(500).json('bad request')
+    .then((result) => {
+      res.json(result);
     })
+    .catch((err) => {
+      res.status(500).json("bad request");
+    });
 };
